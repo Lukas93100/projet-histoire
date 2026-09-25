@@ -62,6 +62,20 @@ docs/TARIFICATION.md          Étude de prix et rentabilité
 4. L'application interroge le statut toutes les 3 s et affiche la progression.
 5. En cas d'erreur, l'histoire passe en `failed` et **n'est plus décomptée**. Une génération bloquée depuis plus de 10 minutes est marquée `failed` automatiquement.
 
+## 🎮 Tester tout de suite (mode démo)
+
+Le mode démo fonctionne **sans Supabase, sans clé API et sans compte store**. Les données restent sur le téléphone et sont effacées au redémarrage. Les histoires sont des exemples construits à partir du prénom, de l'univers et de la morale choisis, et sont lues par la voix du téléphone. Les abonnements sont simulés et aucun paiement n'est demandé.
+
+```bash
+git clone https://github.com/Lukas93100/projet-histoire.git
+cd projet-histoire/app
+npm install
+npx expo start
+```
+Installe **Expo Go** sur ton téléphone (App Store ou Play Store) et scanne le QR code. Sans fichier `.env`, l'app démarre directement en mode démo. Appuie sur « Découvrir la démo » : un profil (Léa) et une histoire d'exemple sont déjà créés.
+
+Pour forcer le mode démo alors que Supabase est configuré, mets `EXPO_PUBLIC_DEMO_MODE=1` dans `app/.env`.
+
 ## Mise en route
 
 ### Prérequis

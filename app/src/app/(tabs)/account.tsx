@@ -5,14 +5,14 @@ import { Alert } from "react-native";
 import { Body, Button, Card, ErrorText, Label, Screen } from "@/components/ui";
 import { deleteAccount, getUsage, summarizeUsage } from "@/lib/api";
 import { manageSubscription, purchasesEnabled, restorePurchases } from "@/lib/purchases";
+import { isDemo } from "@/lib/config";
 import { useSession } from "@/lib/session";
-import { supabase } from "@/lib/supabase";
 import { useFocusData } from "@/lib/useAsync";
 
 const LEGAL_URL = process.env.EXPO_PUBLIC_LEGAL_URL;
 
 export default function Account() {
-  const { session } = useSession();
+  const { session, signOut } = useSession();
   const { data, error, loading, reload } = useFocusData(async () => summarizeUsage(await getUsage()));
   const [busy, setBusy] = useState<string | null>(null);
 
@@ -34,7 +34,7 @@ export default function Account() {
       "Vos profils enfants et toutes vos histoires seront définitivement supprimés. Pensez à résilier votre abonnement depuis l'App Store ou Google Play.",
       [
         { text: "Annuler", style: "cancel" },
-        { text: "Supprimer", style: "destructive", onPress: () => run("delete", deleteAccount) },
+        { text: "Supprimer", style: "destructive", onPress: () => run("delete", async () => { await deleteAccount(); await signOut(); }) },
       ],
     );
 
@@ -79,8 +79,8 @@ export default function Account() {
       {LEGAL_URL ? (
         <Button title="Confidentialité et CGU" variant="ghost" onPress={() => WebBrowser.openBrowserAsync(LEGAL_URL)} />
       ) : null}
-      <Button title="Se déconnecter" variant="secondary" onPress={() => supabase.auth.signOut()} />
-      <Button title="Supprimer mon compte" variant="danger" loading={busy === "delete"} onPress={confirmDelete} />
+      <Button title={isDemo ? "Quitter la démo" : "Se déconnecter"} variant="secondary" onPress={signOut} />
+      <Button title={isDemo ? "Réinitialiser la démo" : "Supprimer mon compte"} variant="danger" loading={busy === "delete"} onPress={confirmDelete} />
     </Screen>
   );
 }

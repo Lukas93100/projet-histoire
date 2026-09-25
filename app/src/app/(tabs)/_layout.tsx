@@ -1,5 +1,6 @@
 import { Tabs } from "expo-router/js-tabs";
 import { Text } from "react-native";
+import { isDemo } from "@/lib/config";
 import { colors } from "@/lib/theme";
 
 const icon = (emoji: string) => ({ focused }: { focused: boolean }) => (
@@ -16,6 +17,9 @@ export default function TabsLayout() {
         tabBarStyle: { backgroundColor: colors.surface, borderTopColor: colors.border },
         tabBarActiveTintColor: colors.primary,
         tabBarInactiveTintColor: colors.textMuted,
+        headerRight: isDemo
+          ? () => <Text style={{ color: colors.accent, fontWeight: "800", marginRight: 16 }}>DÉMO</Text>
+          : undefined,
       }}
     >
       <Tabs.Screen name="index" options={{ title: "Créer", tabBarIcon: icon("✨") }} />

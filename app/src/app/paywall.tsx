@@ -5,6 +5,8 @@ import { Alert, Pressable, StyleSheet, Text, View } from "react-native";
 import { type PlanId, PLANS } from "@shared/catalog";
 import { Body, Button, Chip, ChipGroup, ErrorText, Screen, Title } from "@/components/ui";
 import { getUsage, summarizeUsage } from "@/lib/api";
+import { isDemo } from "@/lib/config";
+import { subscribe as demoSubscribe } from "@/lib/demo";
 import { loadPackages, type PlanPackage, purchase, purchasesEnabled, restorePurchases } from "@/lib/purchases";
 import { colors, radius, spacing } from "@/lib/theme";
 
@@ -43,6 +45,12 @@ export default function Paywall() {
   };
 
   const subscribe = async () => {
+    if (isDemo) {
+      await demoSubscribe(selected);
+      Alert.alert("Mode démo", `Offre ${PLANS[selected].name} activée pour tester (aucun paiement).`);
+      router.back();
+      return;
+    }
     const pkg = find(selected, period);
     if (!pkg) {
       Alert.alert("Indisponible", "Les achats intégrés ne sont pas disponibles sur cet appareil.");
@@ -115,7 +123,9 @@ export default function Paywall() {
       })}
 
       {error ? <ErrorText>{error}</ErrorText> : null}
-      {!purchasesEnabled ? (
+      {isDemo ? (
+        <Body muted>Mode démo : l'abonnement est simulé, aucun paiement ne sera demandé.</Body>
+      ) : !purchasesEnabled ? (
         <ErrorText>Achats désactivés : ajoutez les clés RevenueCat dans app/.env et utilisez une development build.</ErrorText>
       ) : null}
 

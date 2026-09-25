@@ -1,11 +1,14 @@
 import { useState } from "react";
 import { KeyboardAvoidingView, Platform, StyleSheet, Text, View } from "react-native";
 import { Body, Button, ErrorText, Field, Screen } from "@/components/ui";
-import { supabase } from "@/lib/supabase";
+import { isDemo } from "@/lib/config";
+import { useSession } from "@/lib/session";
+import { db } from "@/lib/supabase";
 import { colors, spacing } from "@/lib/theme";
 
 // Connexion sans mot de passe : un code à 6 chiffres est envoyé par e-mail.
 export default function SignIn() {
+  const { enterDemo } = useSession();
   const [email, setEmail] = useState("");
   const [code, setCode] = useState("");
   const [step, setStep] = useState<"email" | "code">("email");
@@ -15,7 +18,7 @@ export default function SignIn() {
   const sendCode = async () => {
     setLoading(true);
     setError(null);
-    const { error } = await supabase.auth.signInWithOtp({ email: email.trim().toLowerCase() });
+    const { error } = await db().auth.signInWithOtp({ email: email.trim().toLowerCase() });
     setLoading(false);
     if (error) setError("Impossible d'envoyer le code. Vérifie l'adresse e-mail.");
     else setStep("code");
@@ -24,7 +27,7 @@ export default function SignIn() {
   const verify = async () => {
     setLoading(true);
     setError(null);
-    const { error } = await supabase.auth.verifyOtp({ email: email.trim().toLowerCase(), token: code.trim(), type: "email" });
+    const { error } = await db().auth.verifyOtp({ email: email.trim().toLowerCase(), token: code.trim(), type: "email" });
     setLoading(false);
     if (error) setError("Code invalide ou expiré.");
     // En cas de succès, la navigation bascule automatiquement (Stack.Protected).
@@ -41,7 +44,15 @@ export default function SignIn() {
           </Body>
         </View>
 
-        {step === "email" ? (
+        {isDemo ? (
+          <>
+            <Body style={{ textAlign: "center" }}>
+              Mode démo : les histoires sont des exemples lus par la voix du téléphone. Aucune donnée n'est envoyée
+              et aucun paiement n'est possible.
+            </Body>
+            <Button title="Découvrir la démo" onPress={enterDemo} />
+          </>
+        ) : step === "email" ? (
           <>
             <Field
               label="Adresse e-mail"

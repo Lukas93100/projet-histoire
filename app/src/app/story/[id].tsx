@@ -2,9 +2,11 @@ import { router, Stack, useLocalSearchParams } from "expo-router";
 import { useEffect, useState } from "react";
 import { ActivityIndicator, Alert, StyleSheet, Text, View } from "react-native";
 import { findOption, MORALS, THEMES } from "@shared/catalog";
+import { DemoPlayer } from "@/components/DemoPlayer";
 import { Player } from "@/components/Player";
 import { Body, Button, Card, ErrorText, Loading, Screen, Title } from "@/components/ui";
 import { audioUrl, deleteStory, getStory, setFavorite } from "@/lib/api";
+import { isDemo } from "@/lib/config";
 import { colors, spacing } from "@/lib/theme";
 import type { Story, StoryStatus } from "@/lib/types";
 
@@ -96,6 +98,8 @@ export default function StoryScreen() {
         </Card>
       ) : story.status !== "ready" ? (
         <Progress status={story.status} />
+      ) : isDemo && story.text ? (
+        <DemoPlayer text={story.text} />
       ) : url ? (
         <Player url={url} title={story.title ?? "Histoire"} />
       ) : (
