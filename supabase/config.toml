@@ -1,0 +1,15 @@
+# Extrait de configuration Supabase CLI (compléter avec `supabase init` si besoin).
+project_id = "projet-histoire"
+
+[auth]
+site_url = "histoiresdusoir://"
+additional_redirect_urls = ["histoiresdusoir://"]
+
+[auth.email]
+enable_signup = true
+# Connexion par code à 6 chiffres envoyé par e-mail (pas de mot de passe).
+otp_length = 6
+otp_expiry = 3600
+
+[functions.revenuecat-webhook]
+verify_jwt = false

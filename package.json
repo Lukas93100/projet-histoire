@@ -1,0 +1,13 @@
+{
+  "name": "projet-histoire",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "vitest run",
+    "check:functions": "cd supabase/functions && deno check */index.ts",
+    "check:app": "cd app && npx tsc --noEmit"
+  },
+  "devDependencies": {
+    "vitest": "^5.0.2"
+  }
+}
